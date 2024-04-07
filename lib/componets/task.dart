@@ -81,9 +81,12 @@ class _TaskState extends State<Task> {
                           });
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.blue)
-                        ),
-                        child: const Icon(Icons.arrow_drop_up, color: Colors.white,))
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.blue)),
+                        child: const Icon(
+                          Icons.arrow_drop_up,
+                          color: Colors.white,
+                        ))
                   ],
                 ),
               ),
