@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:tarefas/data/task_dao.dart';
 import 'dart:math';
 import 'difficuty.dart';
 
 class Task extends StatefulWidget {
   final String nome;
+  final String foto;
   final int dificuldade;
 
-  Task(this.nome, this.dificuldade, {super.key});
+  Task(this.nome, this.foto, this.dificuldade, {super.key});
+
+  int nivel = 0;
 
   @override
   State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
-  int nivel = 0;
   double progress = 0.0;
   Color colorContainer = Colors.blue;
   Random random = Random();
+
+  bool assetOrNetwork() {
+    if (widget.foto.contains('http')) {
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +50,19 @@ class _TaskState extends State<Task> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                          color: Colors.black26,
-                          borderRadius: BorderRadius.circular(4)),
-                      width: 72,
-                      height: 100,
-                    ),
+                        decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular(4)),
+                        width: 72,
+                        height: 100,
+                        child: ClipRRect(
+                          child: assetOrNetwork()
+                              ? Image.asset(
+                                  widget.foto,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.network(widget.foto, fit: BoxFit.cover),
+                        )),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,11 +80,14 @@ class _TaskState extends State<Task> {
                       ],
                     ),
                     ElevatedButton(
+                        onLongPress: () {
+                          TaskDao().delete(widget.nome);
+                        },
                         onPressed: () {
                           setState(() {
-                            nivel++;
+                            widget.nivel++;
                             progress = (widget.dificuldade > 0)
-                                ? (nivel / widget.dificuldade) / 10
+                                ? (widget.nivel / widget.dificuldade) / 10
                                 : 1;
                             //Mudar para cores aleatorias
                             if (progress >= 1.0) {
@@ -106,7 +126,7 @@ class _TaskState extends State<Task> {
                   Padding(
                     padding: const EdgeInsets.all(12),
                     child: Text(
-                      "Nivel: $nivel",
+                      "Nivel: ${widget.nivel}",
                       style: const TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
